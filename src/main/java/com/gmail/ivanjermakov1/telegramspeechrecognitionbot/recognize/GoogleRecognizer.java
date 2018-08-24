@@ -1,5 +1,6 @@
 package com.gmail.ivanjermakov1.telegramspeechrecognitionbot.recognize;
 
+import com.gmail.ivanjermakov1.telegramspeechrecognitionbot.SpeechRecognitionBot;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.ServiceAccountCredentials;
@@ -34,7 +35,7 @@ public class GoogleRecognizer implements Recognizer {
 		RecognitionConfig config = RecognitionConfig.newBuilder()
 				.setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
 				.setSampleRateHertz(16000)
-				.setLanguageCode("en-US")
+				.setLanguageCode(SpeechRecognitionBot.language.toString())
 				.build();
 		RecognitionAudio audio = RecognitionAudio.newBuilder()
 				.setContent(audioBytes)

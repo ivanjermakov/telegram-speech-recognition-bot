@@ -3,6 +3,7 @@ package com.gmail.ivanjermakov1.telegramspeechrecognitionbot;
 import com.gmail.ivanjermakov1.telegramspeechrecognitionbot.config.Configurator;
 import com.gmail.ivanjermakov1.telegramspeechrecognitionbot.exception.DownloadException;
 import com.gmail.ivanjermakov1.telegramspeechrecognitionbot.exception.InvalidMessageException;
+import com.gmail.ivanjermakov1.telegramspeechrecognitionbot.lang.Language;
 import com.gmail.ivanjermakov1.telegramspeechrecognitionbot.recognize.GoogleRecognizer;
 import com.gmail.ivanjermakov1.telegramspeechrecognitionbot.util.WebDownloader;
 import com.gmail.ivanjermakov1.telegramspeechrecognitionbot.util.file.AudioConverter;
@@ -23,6 +24,7 @@ import java.nio.charset.Charset;
 public class SpeechRecognitionBot extends TelegramLongPollingBot {
 	
 	public static Configurator configurator;
+	public static Language language = Language.RUSSIAN;
 	
 	static {
 		try {
@@ -36,12 +38,19 @@ public class SpeechRecognitionBot extends TelegramLongPollingBot {
 	@Override
 	public void onUpdateReceived(Update update) {
 		try {
+			String message = update.getMessage().getText();
+			if (message != null && message.contains("-l")) {
+				String result = changeLanguage(message);
+				sendResponse(update, result);
+				return;
+			}
+			
 			Voice voice = update.getMessage().getVoice();
 			if (voice == null) throw new InvalidMessageException();
 			
 			new Thread(() -> {
 				try {
-					sendResponse(update, analyzeVoice(voice));
+					sendResponse(update, "Recognized: \n" + analyzeVoice(voice));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -96,9 +105,22 @@ public class SpeechRecognitionBot extends TelegramLongPollingBot {
 	private void sendResponse(Update update, String result) throws TelegramApiException {
 		SendMessage message = new SendMessage().setChatId(update.getMessage().getChatId());
 		
-		message.setText("Recognized: \n" + result);
+		message.setText(result);
 		
 		execute(message);
+	}
+	
+	private String changeLanguage(String message) {
+		if (message.contains("en")) {
+			language = Language.ENGLISH;
+			return "Language changed to english.";
+		}
+		if (message.contains("ru")) {
+			language = Language.RUSSIAN;
+			return "Language changed to russian.";
+		}
+		
+		return "Invalid command. Use \"-l <language code>\" to change input language. Available language codes: \'ru\', \'en\'.";
 	}
 	
 }
