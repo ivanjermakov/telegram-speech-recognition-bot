@@ -4,6 +4,7 @@ import com.gmail.ivanjermakov1.telegramspeechrecognitionbot.config.Configurator;
 import com.gmail.ivanjermakov1.telegramspeechrecognitionbot.exception.DownloadException;
 import com.gmail.ivanjermakov1.telegramspeechrecognitionbot.exception.InvalidMessageException;
 import com.gmail.ivanjermakov1.telegramspeechrecognitionbot.lang.Language;
+import com.gmail.ivanjermakov1.telegramspeechrecognitionbot.log.Logger;
 import com.gmail.ivanjermakov1.telegramspeechrecognitionbot.recognize.GoogleRecognizer;
 import com.gmail.ivanjermakov1.telegramspeechrecognitionbot.util.WebDownloader;
 import com.gmail.ivanjermakov1.telegramspeechrecognitionbot.util.file.AudioConverter;
@@ -38,6 +39,7 @@ public class SpeechRecognitionBot extends TelegramLongPollingBot {
 	@Override
 	public void onUpdateReceived(Update update) {
 		try {
+			Logger.info("new message from " + "\"" + update.getMessage().getChat().getUserName() + "\"");
 			String message = update.getMessage().getText();
 			if (message != null && message.contains("-l")) {
 				String result = changeLanguage(message);
@@ -56,8 +58,12 @@ public class SpeechRecognitionBot extends TelegramLongPollingBot {
 				}
 			}).start();
 			
-		} catch (Exception e) {
+		} catch (InvalidMessageException e) {
 			e.printStackTrace();
+			Logger.info("invalid message");
+		} catch (TelegramApiException e) {
+			e.printStackTrace();
+			Logger.info("something went wrong on telegram's side");
 		}
 	}
 	
@@ -108,15 +114,20 @@ public class SpeechRecognitionBot extends TelegramLongPollingBot {
 		message.setText(result);
 		
 		execute(message);
+		
+		Logger.info("new response to " + "\"" + update.getMessage().getChat().getUserName() + "\": " +
+				"\"" + result + "\"");
 	}
 	
 	private String changeLanguage(String message) {
 		if (message.contains("en")) {
 			language = Language.ENGLISH;
+			Logger.info("change language to " + language.toString());
 			return "Language changed to english.";
 		}
 		if (message.contains("ru")) {
 			language = Language.RUSSIAN;
+			Logger.info("change language to " + language.toString());
 			return "Language changed to russian.";
 		}
 		

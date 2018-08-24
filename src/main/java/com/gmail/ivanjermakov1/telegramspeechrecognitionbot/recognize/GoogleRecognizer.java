@@ -1,6 +1,7 @@
 package com.gmail.ivanjermakov1.telegramspeechrecognitionbot.recognize;
 
 import com.gmail.ivanjermakov1.telegramspeechrecognitionbot.SpeechRecognitionBot;
+import com.gmail.ivanjermakov1.telegramspeechrecognitionbot.log.Logger;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.ServiceAccountCredentials;
@@ -50,11 +51,11 @@ public class GoogleRecognizer implements Recognizer {
 			List<SpeechRecognitionAlternative> alternatives = result.getAlternativesList();
 			for (SpeechRecognitionAlternative alternative : alternatives) {
 				resultText.append(alternative.getTranscript());
-				System.out.printf("Transcription: %s%n", alternative.getTranscript());
 			}
 		}
 		speech.close();
 		
+		Logger.info("successful voice recognition from file " + fileName + ". result: " + resultText.toString());
 		return resultText.toString();
 	}
 	
