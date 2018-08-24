@@ -11,9 +11,9 @@ public class Application {
 		ApiContextInitializer.init();
 		TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
 		
-		Bot bot = new Bot();
+		SpeechRecognitionBot speechRecognitionBot = new SpeechRecognitionBot();
 		
-		telegramBotsApi.registerBot(bot);
+		telegramBotsApi.registerBot(speechRecognitionBot);
 	}
 	
 }
