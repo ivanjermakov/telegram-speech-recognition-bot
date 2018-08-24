@@ -97,13 +97,13 @@ public class SpeechRecognitionBot extends TelegramLongPollingBot {
 	private String analyzeVoice(Voice voice) throws IOException, InterruptedException, DownloadException {
 		String filePath = downloadVoice(voice);
 		
-		String newFilePath = AudioConverter.ogaToWav(filePath);
+		String wavFilePath = AudioConverter.ogaToWav(filePath);
 		
-		String result = new GoogleRecognizer().recognize(newFilePath);
+		String result = new GoogleRecognizer().recognize(wavFilePath);
 		
 		//cleanup
 		FileUtils.forceDelete(new File(filePath));
-		FileUtils.forceDelete(new File(newFilePath));
+		FileUtils.forceDelete(new File(wavFilePath));
 		
 		return result;
 	}

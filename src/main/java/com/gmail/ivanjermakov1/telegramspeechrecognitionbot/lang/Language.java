@@ -1,5 +1,6 @@
 package com.gmail.ivanjermakov1.telegramspeechrecognitionbot.lang;
 
+// TODO: support for more langs: https://cloud.google.com/speech-to-text/docs/languages
 public enum Language {
 	
 	ENGLISH("en-US"),
